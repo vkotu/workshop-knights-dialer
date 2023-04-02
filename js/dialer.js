@@ -24,46 +24,28 @@ var nearByKeys = [
 	[2,4]
 ]
 
-countPaths = memoize(countPaths);
 // ****************************
 
 function reachableKeys(startingDigit) {
-
 	return nearByKeys[startingDigit];
-	// var nearByKeys = [];
-	// for(let [rowIdx, row] of dialPad.entries()) {
-	// 	let colIdx = row.indexOf(startingDigit);
-	// 	if(colIdx != -1) {
-	// 		for(let rowMove of [-2,-1,1,2]) {
-	// 			for(let colMove of [-2,-1,1,2]){
-	// 				if(Math.abs(rowMove) != Math.abs(colMove)){
-	// 					if(
-	// 						rowIdx+rowMove >=0 &&
-	// 						rowIdx+rowMove <=3 &&
-	// 						colIdx+colMove <=2 &&
-	// 						dialPad[rowIdx+rowMove][colIdx+colMove] != undefined
-	// 					) {
-	// 						nearByKeys.push(
-	// 							dialPad[rowIdx+rowMove][colIdx+colMove]
-	// 						);
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
-	// return nearByKeys;
 }
 
 function countPaths(startingDigit,hopCount) {
 	if(hopCount == 0) {
 		return 1;
 	}
-	var pathCount = 0;
-	for(let digit of nearByKeys[startingDigit]) {
-		pathCount += countPaths(digit, hopCount-1);
+	var priorPathCounts = Array(10).fill(1);
+	for(let hops  = 0; hops < hopCount; hops++) {
+		let pathCounts = Array(10).fill(0);
+		for (let digit = 0; digit <=9;digit++){
+			for(let n of nearByKeys[digit]) {
+				pathCounts[digit] += priorPathCounts[n];
+			}
+		}
+		priorPathCounts = pathCounts;
 	}
-	return pathCount;
+
+	return priorPathCounts[startingDigit]
 }
 
 
@@ -94,17 +76,4 @@ function followPath(path, paths) {
 	if(!pathForwardFound) {
 		paths.push(path);
 	}
-}
-
-function memoize(fn) {
-	var cache = {} ;
-
-
-	return function memoized(start,length) {
-		if(!cache[`${start}:${length}`]) {
-			cache[`${start}:${length}`] = fn(start,length);
-		}
-		return cache[`${start}:${length}`];
-	}
-
 }
