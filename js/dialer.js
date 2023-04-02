@@ -23,6 +23,8 @@ var nearByKeys = [
 	[1,3],
 	[2,4]
 ]
+
+countPaths = memoize(countPaths);
 // ****************************
 
 function reachableKeys(startingDigit) {
@@ -64,6 +66,8 @@ function countPaths(startingDigit,hopCount) {
 	return pathCount;
 }
 
+
+
 function listAcyclicPaths(startingDigit) {
 	var paths = [];
 	var nextHops = nearByKeys[startingDigit];
@@ -90,4 +94,17 @@ function followPath(path, paths) {
 	if(!pathForwardFound) {
 		paths.push(path);
 	}
+}
+
+function memoize(fn) {
+	var cache = {} ;
+
+
+	return function memoized(start,length) {
+		if(!cache[`${start}:${length}`]) {
+			cache[`${start}:${length}`] = fn(start,length);
+		}
+		return cache[`${start}:${length}`];
+	}
+
 }
